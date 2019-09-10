@@ -1,0 +1,152 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     pimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         20;
+
+deltaT          1e-3;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep     no;
+
+maxCo           5;
+
+functions
+{
+forces
+    {
+        type            forces;
+        libs            ("libforces.so");
+        writeControl   outputTime; //timeStep;
+        //writeInterval         50;
+
+        patches         (cylinder);
+        rho                 rhoInf;
+        rhoInf                   1;
+        CofR               (0 0 0);
+        writeFields            yes;
+
+        
+    }
+
+forceCoeffs
+    {
+        type        forceCoeffs;
+        libs ( "libforces.so" );
+        writeControl   outputTime; //timeStep;
+        //writeInterval        50;
+        patches    ( cylinder );
+        pName p;
+        UName U;
+        log true;
+        rho rhoInf;
+        rhoInf 1;
+        CofR ( 0 0 0 );
+        liftDir ( -0.239733 0.970839 0 );
+        dragDir ( 0.970839 0.239733 0 );
+        pitchAxis ( 0 0 1 );
+        magUInf 618.022;
+        lRef 2;
+        Aref 20;
+    }
+
+fieldAverage1
+    {
+        type            fieldAverage;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    writeTime;
+        timeStart              16;
+
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;
+            }
+
+            p
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;
+            }
+        );
+    }
+
+surfaceSampling
+    {
+        // Sample near-wall velocity
+
+        type surfaces;
+
+        // Where to load it from (if not already in solver)
+        libs            ("libsampling.so");
+        enabled         true;
+        writeControl    outputTime;
+
+        interpolationScheme cellPoint;
+
+        surfaceFormat vtk;
+
+        // Fields to be sampled
+        fields ( U );
+
+        surfaces
+        (
+            plane
+            {
+                type                     plane;
+                planeType       pointAndNormal;
+                pointAndNormalDict
+                {
+                    normal       (1 0 0);
+                    point       (10 0 0);
+                }
+                
+            }
+        );
+    }
+}
+
+
+// ************************************************************************* //

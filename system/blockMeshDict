@@ -1,0 +1,118 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1906                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scale   1;
+
+vertices
+(
+    (0 40 0)    //p0
+    (-40 0 0)   //p1
+    (0 -40 0)   //p2
+    (40 0 0)    //p3
+    (0 1 0)     //p4
+    (-1 0 0)    //p5
+    (0 -1 0)    //p6
+    (1 0 0)     //p7
+    (0 40 5)    //p8
+    (-40 0 5)   //p9
+    (0 -40 5)   //p10
+    (40 0 5)    //p11
+    (0 1 5)     //p12
+    (-1 0 5)    //p13
+    (1 0 5)     //p14
+    (0 -1 5)    //p15
+);
+
+blocks
+(
+    
+    hex (7 3 0 4 14 11 8 12)  (80 320 1) simpleGrading (500 1 1)
+    hex (4 0 1 5 12 8 9 13)   (80 320 1) simpleGrading (500 1 1)
+    hex (5 1 2 6 13 9 10 15)  (80 320 1) simpleGrading (500 1 1)
+    hex (6 2 3 7 15 10 11 14) (80 320 1) simpleGrading (500 1 1)
+    
+
+);
+
+edges
+(
+    //back edge arcs
+    arc 1 0 (-20 34.641 0)  //Arc formed by the points p1-p0 with an arbitrary interpolation point with coordinates (-20 34.641 0)
+    arc 0 3 (20 34.641 0)
+    arc 3 2 (20 -34.641 0)
+    arc 2 1 (-20 -34.641 0)
+    arc 5 4 (-0.5 0.866 0)
+    arc 4 7 (0.5 0.866 0)
+    arc 7 6 (0.5 -0.866 0)
+    arc 6 5 (-0.5 -0.866 0)
+    //front edge arcs
+    arc 9 8 (-20 34.641 5)  //Arc formed by the points p1-p0 with an arbitrary interpolation point with coordinates (-20 34.641 0)
+    arc 8 11 (20 34.641 5)
+    arc 11 10 (20 -34.641 5)
+    arc 10 9 (-20 -34.641 5)
+    arc 13 12 (-0.5 0.866 5)
+    arc 12 14 (0.5 0.866 5)
+    arc 14 15 (0.5 -0.866 5)
+    arc 15 13 (-0.5 -0.866 5)
+);
+
+boundary
+(
+    cylinder
+    {
+        type wall;
+        faces
+        (
+            (13 12 4 5)
+            (15 13 5 6)
+            (14 12 4 7)
+            (15 14 7 6)
+        );
+    }
+    
+    outerBC
+    {
+        type patch;
+        faces
+        (
+            (9 8 0 1)
+            (10 9 1 2)
+            (11 8 0 3)
+            (10 11 3 2)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+            (1 5 4 0)
+            (7 3 0 4)
+            (2 6 5 1)
+            (2 3 7 6)
+            (9 13 12 8)
+            (14 11 8 12)
+            (10 15 13 9)
+            (10 11 14 15)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

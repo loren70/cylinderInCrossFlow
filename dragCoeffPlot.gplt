@@ -1,0 +1,9 @@
+set title  "Force Coefficients"
+set xlabel "Time"
+set ylabel "Force Coefficients"
+set yrange  [-0.8:0.5]
+set xtics   0.02
+set grid xtics noytics
+set terminal png
+set output "dragCoeffPlot.png"
+plot "cylinderInCrossFlow/postProcessing/0/coefficient.dat" \using 1:2 every ::5 with lines title "Cd",\ "cylinderInCrossFlow/postProcessing/..." \using 1:4 every ::5 with lines title "Cd",\
